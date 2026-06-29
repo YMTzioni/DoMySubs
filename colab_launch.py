@@ -24,6 +24,10 @@ def launch_cloud(
         os.environ.setdefault("DOMYSUBS_DEVICE", "cuda")
         os.environ.setdefault("DOMYSUBS_COMPUTE_TYPE", "float16")
 
+    from domysubs.compat_transformers import ensure_transformers_pipeline
+
+    ensure_transformers_pipeline()
+
     launch_app(
         create_app(),
         server_name=host,

@@ -12,28 +12,20 @@ def _run(cmd: list[str]) -> None:
 
 
 def install_colab_deps() -> None:
-  """מתקין ומתקן גרסאות שבורות ב-Colab (transformers / torchvision)."""
-  _run([sys.executable, "-m", "pip", "install", "-q", "--upgrade", "pip"])
+    _run([sys.executable, "-m", "pip", "install", "-q", "--upgrade", "pip", "pillow"])
 
-  # torchvision גורם לשגיאות import ב-Colab עם WhisperX
-  subprocess.call(
-      [sys.executable, "-m", "pip", "uninstall", "-y", "torchvision"],
-      stdout=subprocess.DEVNULL,
-      stderr=subprocess.DEVNULL,
-  )
+    subprocess.call(
+        [sys.executable, "-m", "pip", "uninstall", "-y", "torchvision"],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
 
-  _run([sys.executable, "-m", "pip", "install", "-q", "-r", "requirements-colab.txt"])
-  _run([
-      sys.executable, "-m", "pip", "install", "-q",
-      "transformers>=4.48.0,<4.52.0",
-      "--force-reinstall",
-  ])
+    _run([sys.executable, "-m", "pip", "install", "-q", "-U", "whisperx"])
+    _run([sys.executable, "-m", "pip", "install", "-q", "-r", "requirements-colab.txt"])
 
-  from transformers import Pipeline  # noqa: F401
-  import whisperx  # noqa: F401
+    from domysubs.compat_transformers import verify_whisperx_import
 
-  import transformers
-  print(f"✓ התקנה הושלמה | transformers {transformers.__version__} | whisperx OK")
+    print("✓", verify_whisperx_import())
 
 
 if __name__ == "__main__":

@@ -26,6 +26,9 @@ def transcribe_audio(
     progress: ProgressCallback | None = None,
 ) -> tuple[list[dict], str]:
     """תמלול קובץ אודיו עם WhisperX. מחזיר segments וקוד שפה."""
+    from domysubs.compat_transformers import ensure_transformers_pipeline
+
+    ensure_transformers_pipeline()
     import whisperx
 
     device = _detect_device(settings.device)
