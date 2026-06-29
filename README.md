@@ -139,7 +139,7 @@ os.chdir('/content/DoMySubs')
 או שכפול ראשוני:
 
 ```python
-!git clone https://github.com/YOUR_USERNAME/DoMySubs.git /content/DoMySubs
+!git clone https://github.com/YMTzioni/DoMySubs.git /content/DoMySubs
 ```
 
 ---

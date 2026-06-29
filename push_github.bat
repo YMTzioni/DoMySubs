@@ -5,17 +5,24 @@ cd /d "%~dp0"
 echo === DoMySubs - העלאה ל-GitHub ===
 echo.
 
+set "GH=gh"
 where gh >nul 2>&1
 if errorlevel 1 (
-    echo [שגיאה] GitHub CLI לא מותקן. התקן: winget install GitHub.cli
-    pause
-    exit /b 1
+    if exist "%ProgramFiles%\GitHub CLI\gh.exe" (
+        set "GH=%ProgramFiles%\GitHub CLI\gh.exe"
+    ) else (
+        echo [שגיאה] GitHub CLI לא מותקן.
+        echo התקן: winget install GitHub.cli
+        echo ואז סגור ופתח מחדש את PowerShell.
+        pause
+        exit /b 1
+    )
 )
 
-gh auth status >nul 2>&1
+"%GH%" auth status >nul 2>&1
 if errorlevel 1 (
     echo התחבר ל-GitHub...
-    gh auth login
+    "%GH%" auth login
 )
 
 git status >nul 2>&1
@@ -38,7 +45,7 @@ if errorlevel 1 (
     echo.
     echo יוצר repo חדש ב-GitHub...
     git branch -M main
-    gh repo create DoMySubs --public --source=. --remote=origin --push
+    "%GH%" repo create DoMySubs --public --source=. --remote=origin --push
 ) else (
     git push
 )
