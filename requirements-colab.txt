@@ -1,6 +1,6 @@
-# Google Colab — גרסאות יציבות (נבדק מול WhisperX + Gradio)
-numpy>=2.1.0,<2.3.0
-pillow>=8.0,<12.0
+# Google Colab — התקנה מינימלית (לפי המלצת WhisperX)
+# אל תכפה numpy/transformers ידנית — whisperx מנהל בעצמו
+
 whisperx
 gradio>=4.0,<6.0
 yt-dlp

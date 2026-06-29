@@ -24,9 +24,9 @@ def launch_cloud(
         os.environ.setdefault("DOMYSUBS_DEVICE", "cuda")
         os.environ.setdefault("DOMYSUBS_COMPUTE_TYPE", "float16")
 
-    from domysubs.compat_transformers import ensure_transformers_pipeline
+    from domysubs.compat_transformers import prepare_whisperx_environment
 
-    ensure_transformers_pipeline()
+    prepare_whisperx_environment()
 
     launch_app(
         create_app(),
