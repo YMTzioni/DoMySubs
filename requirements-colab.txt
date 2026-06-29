@@ -1,0 +1,9 @@
+# תלויות ל-Google Colab (GPU)
+# WhisperX דורש transformers עם Pipeline — גרסאות חדשות ב-Colab שוברות את זה
+
+whisperx
+gradio>=4.0
+yt-dlp
+deep-translator
+python-dotenv
+transformers>=4.48.0,<4.52.0
