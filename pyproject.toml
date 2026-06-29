@@ -1,0 +1,26 @@
+[project]
+name = "domysubs"
+version = "0.1.0"
+description = "סטודיו כתוביות לעברית עם WhisperX"
+requires-python = ">=3.10"
+dependencies = [
+    "whisperx",
+    "gradio>=4.0",
+    "yt-dlp",
+    "deep-translator",
+    "python-dotenv",
+    "torch",
+    "torchaudio",
+]
+
+[project.scripts]
+domysubs = "domysubs.cli:main"
+domysubs-studio = "domysubs.studio:main"
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["domysubs*"]

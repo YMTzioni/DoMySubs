@@ -1,0 +1,7 @@
+whisperx
+gradio>=4.0
+yt-dlp
+deep-translator
+python-dotenv
+torch
+torchaudio
