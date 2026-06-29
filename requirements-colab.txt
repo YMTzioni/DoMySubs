@@ -1,7 +1,8 @@
-# Google Colab — התקנה מינימלית (לא לכפות transformers ישן)
+# Google Colab — גרסאות יציבות (נבדק מול WhisperX + Gradio)
+numpy>=2.1.0,<2.3.0
+pillow>=8.0,<12.0
 whisperx
-gradio>=4.0
+gradio>=4.0,<6.0
 yt-dlp
 deep-translator
 python-dotenv
-pillow>=10.0

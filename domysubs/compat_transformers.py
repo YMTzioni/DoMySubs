@@ -64,8 +64,12 @@ def ensure_transformers_pipeline() -> None:
 
 def verify_whisperx_import() -> str:
     """בדיקת ייבוא — מחזיר גרסאות לתצוגה."""
+    import numpy as np
+
+    _ = np.__version__  # וידוא ש-numpy תקין לפני שרשרת הייבוא
+
     ensure_transformers_pipeline()
     import transformers
     import whisperx
 
-    return f"transformers {transformers.__version__} | whisperx OK"
+    return f"numpy {np.__version__} | transformers {transformers.__version__} | whisperx OK"
