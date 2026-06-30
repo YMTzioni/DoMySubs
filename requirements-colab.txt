@@ -6,3 +6,4 @@ gradio>=4.0,<6.0
 yt-dlp
 deep-translator
 python-dotenv
+openpyxl>=3.1.0

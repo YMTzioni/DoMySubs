@@ -6,6 +6,7 @@ import logging
 
 import gradio as gr
 
+from domysubs.batch import format_batch_summary, process_folder
 from domysubs.config import Settings, get_settings
 from domysubs.hardware import format_scan_report, recommend_settings, scan_hardware
 from domysubs.pipeline import process_input, process_srt
@@ -204,6 +205,55 @@ def process_youtube_url(
         return None, f"שגיאה: {exc}", ""
 
 
+def process_folder_batch(
+    folder_path,
+    output_path,
+    recursive,
+    source_lang,
+    device,
+    model,
+    batch_size,
+    compute_type,
+    skip_translation,
+    progress=gr.Progress(),
+):
+    if not folder_path or not str(folder_path).strip():
+        return None, None, None, "הזן נתיב לתיקייה עם סרטונים", ""
+
+    folder = str(folder_path).strip().strip('"')
+    out = str(output_path).strip().strip('"') if output_path else None
+
+    settings = _build_settings(device, model, batch_size, compute_type)
+    status_log = []
+
+    def on_progress(msg: str, pct: float):
+        progress(pct / 100, desc=msg)
+        status_log.append(f"[{int(pct):3d}%] {msg}")
+
+    try:
+        result = process_folder(
+            folder,
+            output_dir=out,
+            recursive=recursive,
+            settings=settings,
+            source_language=source_lang,
+            skip_translation=skip_translation,
+            progress=on_progress,
+        )
+        summary = format_batch_summary(result)
+        zip_file = result.zip_path if result.zip_path else None
+        return (
+            result.manifest_path,
+            zip_file,
+            result.output_dir,
+            "\n".join(status_log),
+            summary,
+        )
+    except Exception as exc:
+        logger.exception("Batch processing failed")
+        return None, None, None, f"שגיאה: {exc}", ""
+
+
 def process_srt_file(
     file,
     source_lang,
@@ -353,6 +403,60 @@ def create_app() -> gr.Blocks:
                             )
                         srt_out, srt_log, srt_preview = _result_outputs()
 
+                    with gr.Tab("📁  תיקייה (אצווה)"):
+                        with gr.Group(elem_classes=["domysubs-card"]):
+                            gr.Markdown(
+                                "עיבוד גורף של כל הסרטונים בתיקייה. "
+                                "כל קובץ SRT יישמר **באותו שם** כמו הוידאו, בתיקיית פלט מסודרת + Excel."
+                            )
+                            batch_folder = gr.Textbox(
+                                label="נתיב לתיקיית הסרטונים",
+                                placeholder=r"C:\Videos\MyFolder",
+                                elem_classes=["ltr-field"],
+                            )
+                            batch_output = gr.Textbox(
+                                label="תיקיית פלט (אופציונלי)",
+                                placeholder="ריק = תיקיית המקור/DoMySubs_output/...",
+                                elem_classes=["ltr-field"],
+                            )
+                            with gr.Row():
+                                batch_recursive = gr.Checkbox(
+                                    label="כולל תת-תיקיות",
+                                    value=True,
+                                )
+                                batch_lang = gr.Dropdown(
+                                    LANGUAGES,
+                                    value=None,
+                                    label="שפת מקור",
+                                )
+                                batch_skip = gr.Checkbox(
+                                    label="ללא תרגום",
+                                    value=False,
+                                )
+                            batch_btn = gr.Button(
+                                "הפק כתוביות לכל התיקייה",
+                                variant="primary",
+                                elem_classes=["primary-btn"],
+                            )
+                        with gr.Row():
+                            batch_manifest = gr.File(label="מניפסט Excel")
+                            batch_zip = gr.File(label="הורדת ZIP")
+                        batch_out_dir = gr.Textbox(
+                            label="תיקיית פלט",
+                            interactive=False,
+                            elem_classes=["ltr-field"],
+                        )
+                        batch_log = gr.Textbox(
+                            label="יומן עיבוד",
+                            lines=8,
+                            elem_classes=["mono-box"],
+                        )
+                        batch_summary = gr.Textbox(
+                            label="סיכום",
+                            lines=12,
+                            elem_classes=["mono-box"],
+                        )
+
         gr.HTML(FOOTER_HTML)
 
         scan_outputs = [
@@ -381,6 +485,14 @@ def create_app() -> gr.Blocks:
             process_srt_file,
             inputs=[srt_file, srt_lang],
             outputs=[srt_out, srt_log, srt_preview],
+        )
+        batch_btn.click(
+            process_folder_batch,
+            inputs=[
+                batch_folder, batch_output, batch_recursive, batch_lang,
+                device, model, batch_size, compute_type, batch_skip,
+            ],
+            outputs=[batch_manifest, batch_zip, batch_out_dir, batch_log, batch_summary],
         )
 
     return app

@@ -34,6 +34,7 @@ def process_media(
     source_language: str | None = None,
     skip_translation: bool = False,
     progress: ProgressCallback | None = None,
+    output_path: str | Path | None = None,
 ) -> tuple[str, list[SubtitleCue], str]:
     """
     עיבוד קובץ וידאו/אודיו:
@@ -61,7 +62,12 @@ def process_media(
         progress(f"מתרגם מ-{src_lang} לעברית...", 90)
         cues = translate_cues(cues, source_lang=src_lang, target_lang="he", progress=progress)
 
-    out_path = _output_path()
+    if output_path is None:
+        out_path = _output_path()
+    else:
+        out_path = Path(output_path)
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+
     save_srt(cues, str(out_path))
     progress("הושלם!", 100)
 

@@ -103,6 +103,29 @@ translated_he_20260629_143500.srt
 | `DOMYSUBS_COMPUTE_TYPE` | `int8` | `int8` ל-CPU, `float16` ל-GPU |
 | `DOMYSUBS_AUTO_SCAN` | `true` | סריקת חומרה אוטומטית בפתיחת הסטודיו |
 
+## עיבוד תיקייה (אצווה)
+
+עיבוד גורף של כל הסרטונים בתיקייה — כל SRT באותו שם כמו הוידאו + Excel מסודר.
+
+**בסטודיו:** טאב «תיקייה (אצווה)»
+
+**בשורת פקודה:**
+```bash
+python -m domysubs --batch-folder "C:\Videos\MyFolder"
+python -m domysubs --batch-folder "C:\Videos" -o "C:\Videos\subtitles_he"
+```
+
+**פלט:**
+```
+MyFolder/DoMySubs_output/20260629_143022/
+├── video1.srt
+├── video2.srt
+├── manifest.xlsx    ← שם וידאו | שם SRT | מיקום | סטטוס
+└── כתוביות_מאוגדות.zip
+```
+
+---
+
 ## סנכרון עם GitHub
 
 ### העלאה ראשונית (פעם אחת)
